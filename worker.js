@@ -443,10 +443,13 @@ self.props = {
       } = await gd.listFolderByPath(path, self.props.default_root_id);
       let fileht = `<table>
       <tr>
+      <th>Sr. No.</th>
       <th>Filename</th>
       <th>Size</th>
       </tr>
       `;
+
+      let filecount = 0;
 
       let folderht = '';
 
@@ -458,7 +461,7 @@ self.props = {
           folderht += `→ <a href="${p}">${f.name}</a><br>`
           continue;
         }
-
+        filecount++;
         let x = f.size;
         let s = '';
         if (x < 1024) {
@@ -470,7 +473,7 @@ self.props = {
         } else {
           s = `${(x / (1024 * 1024 * 1024)).toFixed(2)} GB (${x} bytes)`
         }
-        fileht += `<tr><td><a href="${p}">${f.name}</a></td><td>${s}</td></tr>`
+        fileht += `<tr><td>${filecount}</td><td><a href="${p}">${f.name}</a></td><td>${s}</td></tr>`
       }
 
       let title = "AOSiP";
@@ -478,7 +481,7 @@ self.props = {
         folderht = `← <a href="${parent}">Parent Directory</a><br>` + folderht
         title = `AOSiP for ${path.replace(/\//g, '')}`
       }
-
+      if (filecount == 0) fileht = "";
       const ht = `<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
 <html>
 <head>
