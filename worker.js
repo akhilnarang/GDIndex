@@ -458,7 +458,19 @@ self.props = {
           folderht += `→ <a href="${p}">${f.name}</a><br>`
           continue;
         }
-        fileht += `<tr><td><a href="${p}">${f.name}</a></td><td>${f.size}</td></tr>`
+
+        let x = f.size;
+        let s = '';
+        if (x < 1024) {
+          s = `${x} B`
+        } else if (x < 1024 * 1024) {
+          s = `${(x/1024).toFixed(2)} KB (${x} bytes)`
+        } else if (x < 1024 * 1024 * 1024) {
+          s = `${(x / (1024 * 1024)).toFixed(2)} MB (${x} bytes)`
+        } else {
+          s = `${(x / (1024 * 1024 * 1024)).toFixed(2)} GB (${x} bytes)`
+        }
+        fileht += `<tr><td><a href="${p}">${f.name}</a></td><td>${s}</td></tr>`
       }
 
       let title = "AOSiP";
