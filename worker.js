@@ -425,7 +425,7 @@ self.props = {
         headers: h
       });
     }
-    return Response.redirect(`https://get.aosip.dev/${path}/`, 302);
+    return Response.redirect(`${request.url}/`, 302);
   }
 
   function encodePathComponent(path) {
