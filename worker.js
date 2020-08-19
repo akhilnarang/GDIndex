@@ -494,7 +494,7 @@ self.props = {
           headers: h
         });
       } else {
-        return Response.redirect(result.webViewLink, 302);
+        return Response.redirect(`https://get.aosip.dev/${path}/`, 302);
       }
     }
   }
