@@ -441,18 +441,29 @@ self.props = {
       const {
         files
       } = await gd.listFolderByPath(path, self.props.default_root_id);
-      let fileht = '';
+      let fileht = `<table>
+      <tr>
+      <th>Filename</th>
+      <th>Size</th>
+      </tr>
+      `;
+
+      let folderht = '';
 
       for (const f of files) {
         const isf = f.mimeType === 'application/vnd.google-apps.folder';
-        if (isf && f.name == '_h5ai') continue;
         const p = encodePathComponent(path + f.name);
-        fileht += `→ <a href="${p + (isf ? '/' : '')}">${f.name}</a><br>`;
+        if (isf) {
+          if (f.name == '_h5ai') continue;
+          folderht += `→ <a href="${p}">${f.name}</a><br>`
+          continue;
+        }
+        fileht += `<tr><td><a href="${p}">${f.name}</a></td><td>${f.size}</td></tr>`
       }
 
       let title = "AOSiP";
       if (path != '/') {
-        fileht = `← <a href="${parent}">Parent Directory</a><br>` + fileht
+        folderht = `← <a href="${parent}">Parent Directory</a><br>` + folderht
         title = `AOSiP for ${path.replace(/\//g, '')}`
       }
 
@@ -463,6 +474,7 @@ self.props = {
 </head>
 <body>
 <h1>${title}</h1>
+${folderht}
 ${fileht}
 </body>
 </html>`;
