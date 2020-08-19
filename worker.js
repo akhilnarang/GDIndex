@@ -282,11 +282,6 @@ self.props = {
       this.expires = Date.now() + 3500 * 1000; // normally, it should expiers after 3600 seconds
     }
 
-    async listDrive() {
-      await this.initializeClient();
-      return this.client.get('drives').json();
-    }
-
     async download(id, range = '') {
       await this.initializeClient();
       return this.client.get(`files/${id}`, {
@@ -299,12 +294,6 @@ self.props = {
           Range: range
         }
       });
-    }
-
-    async downloadByPath(path, rootId = 'root', range = '') {
-      const id = await this.getId(path, rootId);
-      if (!id) return null;
-      return this.download(id, range);
     }
 
     async getMeta(id) {
@@ -404,45 +393,9 @@ self.props = {
 
       return resp.files[0].id; // when there are more than 1 items, simply return the first one
     }
-
-    async upload(parentId, name, file) {
-      await this.initializeClient();
-      const createResp = await this.client.post('https://www.googleapis.com/upload/drive/v3/files', {
-        qs: {
-          uploadType: 'resumable',
-          supportsAllDrives: true
-        },
-        json: {
-          name,
-          parents: [parentId]
-        }
-      });
-      const putUrl = createResp.headers.get('Location');
-      return this.client.put(putUrl, {
-        body: file
-      }).json();
-    }
-
-    async uploadByPath(path, name, file, rootId = 'root') {
-      const id = await this.getId(path, rootId);
-      if (!id) return null;
-      return this.upload(id, name, file);
-    }
-
-    async delete(fileId) {
-      return this.client.delete(`files/${fileId}`);
-    }
-
-    async deleteByPath(path, rootId = 'root') {
-      const id = await this.getId(path, rootId);
-      if (!id) return null;
-      return this.delete(id);
-    }
-
   }
 
   const gd = new GoogleDrive(self.props);
-  const HTML = `<!DOCTYPE html><html lang=en><head><meta charset=utf-8><meta http-equiv=X-UA-Compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1"><title>${self.props.title}</title><link href="/~_~_gdindex/resources/css/app.css" rel=stylesheet></head><body><script>window.props = { title: '${self.props.title}', default_root_id: '${self.props.default_root_id}', api: location.protocol + '//' + location.host, upload: ${self.props.upload} }<\/script><div id=app></div><script src="/~_~_gdindex/resources/js/app.js"><\/script></body></html>`;
 
   async function onGet(request) {
     let {
@@ -450,173 +403,29 @@ self.props = {
     } = request;
     const rootId = request.searchParams.get('rootId') || self.props.default_root_id;
 
-    if (path.startsWith('/~_~_gdindex/resources/')) {
-      const remain = path.replace('/~_~_gdindex/resources/', '');
-      const r = await fetch(`https://raw.githubusercontent.com/maple3142/GDIndex/master/web/dist/${remain}`);
+    const result = await gd.getMetaByPath(path, rootId);
+
+    if (!result) {
+      return new Response('null', {
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        status: 404
+      });
+    }
+
+    const isGoogleApps = result.mimeType.includes('vnd.google-apps');
+
+    if (!isGoogleApps) {
+      const r = await gd.download(result.id, request.headers.get('Range'));
+      const h = new Headers(r.headers);
+      h.set('Content-Disposition', `inline; filename*=UTF-8''${encodeURIComponent(result.name)}`);
       return new Response(r.body, {
-        headers: {
-          'Content-Type': mime.getType(remain) + '; charset=utf-8',
-          'Cache-Control': 'max-age=600'
-        }
-      });
-    } else if (path === '/~_~_gdindex/drives') {
-      return new Response(JSON.stringify((await gd.listDrive())), {
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
-    } else if (path.substr(-1) === '/' || path.startsWith('/~viewer')) {
-      return new Response(HTML, {
-        headers: {
-          'Content-Type': 'text/html; charset=utf-8'
-        }
-      });
-    } else {
-      const result = await gd.getMetaByPath(path, rootId);
-
-      if (!result) {
-        return new Response('null', {
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          status: 404
-        });
-      }
-
-      const isGoogleApps = result.mimeType.includes('vnd.google-apps');
-
-      if (!isGoogleApps) {
-        const r = await gd.download(result.id, request.headers.get('Range'));
-        const h = new Headers(r.headers);
-        h.set('Content-Disposition', `inline; filename*=UTF-8''${encodeURIComponent(result.name)}`);
-        return new Response(r.body, {
-          status: r.status,
-          headers: h
-        });
-      } else {
-        return Response.redirect(`https://get.aosip.dev/${path}/`, 302);
-      }
-    }
-  }
-
-  async function onPost(request) {
-    let {
-      pathname: path
-    } = request;
-    const rootId = request.searchParams.get('rootId') || self.props.default_root_id;
-
-    if (path.substr(-1) === '/') {
-      return new Response(JSON.stringify((await gd.listFolderByPath(path, rootId))), {
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
-    } else {
-      const result = await gd.getMetaByPath(path, rootId);
-
-      if (!result) {
-        return new Response('null', {
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          status: 404
-        });
-      }
-
-      const isGoogleApps = result.mimeType.includes('vnd.google-apps');
-
-      if (!isGoogleApps) {
-        const r = await gd.download(result.id, request.headers.get('Range'));
-        const h = new Headers(r.headers);
-        h.set('Content-Disposition', `inline; filename*=UTF-8''${encodeURIComponent(result.name)}`);
-        return new Response(r.body, {
-          status: r.status,
-          headers: h
-        });
-      } else {
-        return Response.redirect(result.webViewLink, 302);
-      }
-    }
-  }
-
-  async function onPut(request) {
-    if (!self.props.upload) {
-      return new Response("Upload isn't enabled.", {
-        headers: {
-          'Content-Type': 'text/plain'
-        },
-        status: 405
+        status: r.status,
+        headers: h
       });
     }
-
-    let {
-      pathname: path
-    } = request;
-
-    if (path.substr(-1) === '/') {
-      return new Response(null, {
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        status: 405
-      });
-    }
-
-    const url = request.searchParams.get('url');
-    let fileBody;
-
-    if (url) {
-      const u = new URL(url);
-      const Referer = u.href;
-      const Origin = u.protocol + '//' + u.host;
-      fileBody = (await fetch(url, {
-        headers: {
-          Referer,
-          Origin
-        }
-      })).body;
-    } else {
-      fileBody = request.body;
-    }
-
-    const tok = path.split('/');
-    const name = tok.pop();
-    const parent = tok.join('/');
-    const rootId = request.searchParams.get('rootId') || self.props.default_root_id;
-    return new Response(JSON.stringify((await gd.uploadByPath(parent, name, fileBody, rootId))), {
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
-  }
-
-  function unauthorized() {
-    return new Response('Unauthorized', {
-      headers: {
-        'WWW-Authenticate': 'Basic realm="goindex"',
-        'Access-Control-Allow-Origin': '*'
-      },
-      status: 401
-    });
-  }
-
-  function parseBasicAuth(auth) {
-    try {
-      return atob(auth.split(' ').pop()).split(':');
-    } catch (e) {
-      return [];
-    }
-  }
-
-  function doBasicAuth(request) {
-    const auth = request.headers.get('Authorization');
-
-    if (!auth || !/^Basic [A-Za-z0-9._~+/-]+=*$/i.test(auth)) {
-      return false;
-    }
-
-    const [user, pass] = parseBasicAuth(auth);
-    return user === self.props.user && pass === self.props.pass;
+    return Response.redirect(`https://get.aosip.dev/${path}/`, 302);
   }
 
   function encodePathComponent(path) {
@@ -624,27 +433,10 @@ self.props = {
   }
 
   async function handleRequest(request) {
-    if (request.method === 'OPTIONS') // allow preflight request
-      return new Response('', {
-        status: 200,
-        headers: {
-          'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Headers': '*',
-          'Access-Control-Allow-Methods': 'GET, POST, PUT, HEAD, OPTIONS'
-        }
-      });
-
-    if (self.props.auth && !doBasicAuth(request)) {
-      return unauthorized();
-    }
-
     request = Object.assign({}, request, new URL(request.url));
-    request.pathname = request.pathname.split('/').map(decodeURIComponent).map(decodeURIComponent) // for some super special cases, browser will force encode it...   eg: +αあるふぁきゅん。 - +♂.mp3
-    .join('/');
 
-    if (self.props.lite && request.pathname.endsWith('/')) {
-      // lite mode
-      const path = request.pathname;
+    let path = request.pathname;
+    if (path.endsWith('/')) {
       let parent = encodePathComponent(path.split('/').slice(0, -2).join('/') + '/');
       const {
         files
@@ -655,20 +447,23 @@ self.props = {
         const isf = f.mimeType === 'application/vnd.google-apps.folder';
         if (isf && f.name == '_h5ai') continue;
         const p = encodePathComponent(path + f.name);
-        fileht += `<li><a href="${p + (isf ? '/' : '')}">${f.name}</a></li>`;
+        fileht += `→ <a href="${p + (isf ? '/' : '')}">${f.name}</a><br>`;
+      }
+
+      let title = "AOSiP";
+      if (path != '/') {
+        fileht = `← <a href="${parent}">Parent Directory</a><br>` + fileht
+        title = `AOSiP for ${path.replace(/\//g, '')}`
       }
 
       const ht = `<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
 <html>
 <head>
-<title>Index of ${path}</title>
+<title>${title}</title>
 </head>
 <body>
-<h1>Index of ${path}</h1>
-<ul>
-<li><a href="${parent}"> Parent Directory</a></li>
+<h1>${title}</h1>
 ${fileht}
-</ul>
 </body>
 </html>`;
       return new Response(ht, {
@@ -679,10 +474,11 @@ ${fileht}
       });
     }
 
-    let resp;
-    if (request.method === 'GET') resp = await onGet(request);else if (request.method === 'POST') resp = await onPost(request);else if (request.method === 'PUT') resp = await onPut(request);else resp = new Response('', {
-      status: 405
-    });
+    if (request.method != 'GET') {
+      return new Response('', {status: 405});
+    }
+
+    let resp = await onGet(request);
     const obj = Object.create(null);
 
     for (const [k, v] of resp.headers.entries()) {
