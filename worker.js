@@ -653,6 +653,7 @@ self.props = {
 
       for (const f of files) {
         const isf = f.mimeType === 'application/vnd.google-apps.folder';
+        if (isf && f.name == '_h5ai') continue;
         const p = encodePathComponent(path + f.name);
         fileht += `<li><a href="${p + (isf ? '/' : '')}">${f.name}</a></li>`;
       }
