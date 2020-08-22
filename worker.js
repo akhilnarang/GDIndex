@@ -435,7 +435,7 @@ self.props = {
   async function handleRequest(request) {
     request = Object.assign({}, request, new URL(request.url));
 
-    let path = request.pathname;
+    let path = request.pathname.split('/').map(decodeURIComponent).map(decodeURIComponent).join('/');
     if (path.endsWith('/')) {
       let parent = encodePathComponent(path.split('/').slice(0, -2).join('/') + '/');
       const {
