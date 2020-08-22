@@ -1,14 +1,10 @@
 self.props = {
-	title: 'GDIndex',
-	default_root_id: 'root',
-	client_id: '202264815644.apps.googleusercontent.com',
-	client_secret: 'X4Z3ca8xfWDb1Voo-F9a7ZxJ',
-	refresh_token: '',
-	auth: false,
-	user: '',
-	pass: '',
-	upload: false,
-	lite: false
+	title: TITLE,
+	default_root_id: DEFAULT_ROOT_ID,
+	client_id: CLIENT_ID,
+	client_secret: CLIENT_SECRET,
+  refresh_token: REFRESH_TOKEN,
+  folder_title: FOLDER_TITLE
 };
 (function () {
   'use strict';
@@ -476,10 +472,10 @@ self.props = {
         fileht += `<tr><td>${filecount}</td><td><a href="${p}">${f.name}</a></td><td>${s}</td></tr>`
       }
 
-      let title = "AOSiP";
+      let title = self.props.title;
       if (path != '/') {
         folderht = `← <a href="${parent}">Parent Directory</a><br>` + folderht
-        title = `AOSiP for ${path.replace(/\//g, '')}`
+        title = `${self.props.folder_title} ${path.replace(/\//g, '')}`
       }
       if (filecount == 0) fileht = "";
       const ht = `<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
