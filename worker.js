@@ -486,9 +486,10 @@ self.props = {
 <html>
 <head>
 <title>${title}</title>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet">
 </head>
-<body>
-<h1>${title}</h1>
+<body style="font-family: 'Open Sans', sans-serif;">
+<h1 style="color: #009668;">${title}</h1>
 ${folderht}
 ${fileht}
 </body>
