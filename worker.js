@@ -399,7 +399,7 @@ self.props = {
     } = request;
     const rootId = request.searchParams.get('rootId') || self.props.default_root_id;
 
-    const result = await gd.getMetaByPath(path, rootId);
+    const result = await gd.getMetaByPath(decodeURIComponent(path), rootId);
 
     if (!result) {
       return new Response('null', {
