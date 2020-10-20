@@ -1,0 +1,4 @@
+type = "javascript"
+name = "akhil-drive"
+route = "https://drive.akhilnarang.dev/*"
+workers_dot_dev = false

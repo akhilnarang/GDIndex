@@ -1,0 +1,13 @@
+{
+  "name": "gdindex",
+  "version": "1.0.0",
+  "description": "A cloudflare worker based on maple3142/GDIndex",
+  "main": "worker.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/akhilnarang//GDIndex.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "homepage": "https://github.com/akhilnarang/GDIndex"
+}

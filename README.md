@@ -16,3 +16,7 @@ Everything is configurable using environment variables
 |Folder title|`FOLDER_TITLE`|
 
 (Folder title is what is prefixed to the folder name on its page)
+
+You can set the the above as well as `CF_ACCOUNT_ID`, `CF_ZONE_ID`, `CF_API_TOKEN` as secrets in the github repository, for auto deploying on a push to the repo
+
+(Go set the encrypted secrets manually once, since the wrangler action first tries to publish the worker and then set the secrets, and the worker can't be published before the secrets exist)
