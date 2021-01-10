@@ -9,5 +9,9 @@
   },
   "author": "",
   "license": "MIT",
-  "homepage": "https://github.com/akhilnarang/GDIndex"
+  "homepage": "https://github.com/akhilnarang/GDIndex",
+  "dependencies": {
+    "@sagi.io/workers-jwt": "0.0.20",
+    "mime": "^2.4.7"
+  }
 }
