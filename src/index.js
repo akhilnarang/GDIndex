@@ -62,24 +62,32 @@ async function handleRequest(request) {
     const {
       files
     } = await gd.listFolderByPath(path, self.props.default_root_id);
-    let fileht = `<table>
+    let fileht = `<table class="table">
       <tr>
       <th>Sr. No.</th>
-      <th>Filename</th>
+      <th>File Name</th>
       <th>Size</th>
       </tr>
       `;
 
+    let folderht = `<table class="table">
+        <tr>
+        <th>Sr. No.</th>
+        <th>Folder Name</th>
+        </tr>
+        `;
+
     let filecount = 0;
 
-    let folderht = '';
+    let foldercount = 0;
 
     for (const f of files) {
       const isf = f.mimeType === 'application/vnd.google-apps.folder';
       const p = encodePathComponent(path + f.name);
       if (isf) {
         if (f.name == '_h5ai') continue;
-        folderht += `→ <a href="${p}">${f.name}</a><br>`
+        foldercount++;
+        folderht += `<tr><td>${foldercount}</td><td><a href="${p}">${f.name}</a></td></tr>`
         continue;
       }
       filecount++;
@@ -96,6 +104,8 @@ async function handleRequest(request) {
       }
       fileht += `<tr><td>${filecount}</td><td><a href="${p}">${f.name}</a></td><td>${s}</td></tr>`
     }
+    fileht += `</table>`
+    folderht += `</table>`
 
     let title = self.props.title;
     if (path != '/') {
@@ -108,11 +118,14 @@ async function handleRequest(request) {
 <head>
 <title>${title}</title>
 <link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
 </head>
 <body style="font-family: 'Open Sans', sans-serif;">
+<div class="container">
 <h1 style="color: #009668;">${title}</h1>
 ${folderht}
 ${fileht}
+</div>
 </body>
 </html>`;
     return new Response(ht, {
