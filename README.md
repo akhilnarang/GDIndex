@@ -15,9 +15,15 @@ Everything is configurable using environment variables (mostly -- need to figure
 |Refresh token|`REFRESH_TOKEN`|
 |Folder title|`FOLDER_TITLE`|
 
+If you're using a service account, drop `CLIENT_ID`, `CLIENT_SECRET`, and `REFRESH_TOKEN`.
+
+Instead set `USE_SERVICE_ACCOUNT` to `true`, and set `SERVICE_ACCOUNT_JSON` (should be self-explanatory)
+
+There may be issues
+
 (Folder title is what is prefixed to the folder name on its page)
 
-You can set the the above as well as `CF_ACCOUNT_ID`, `CF_ZONE_ID`, `CF_API_TOKEN` as secrets in the github repository, for auto deploying on a push to the repo
+You can set the the above as well as `CF_ACCOUNT_ID`, `CF_API_TOKEN` as secrets in the github repository, for auto deploying on a push to the repo. You will require  `CF_ZONE_ID` as well if you're deploying to your own domain and not a workers.dev domain, which will also require you to set `workers_dev` to `false` in `wrangler.toml`, and set `route` to your domain.
 
 (Go set the encrypted secrets manually once, since the wrangler action first tries to publish the worker and then set the secrets, and the worker can't be published before the secrets exist)
 
