@@ -1,0 +1,17 @@
+html, body {
+    color: white;
+    background-color: #242627;
+    font-family: 'Open Sans', sans-serif;
+}
+
+table, td, th, tr {
+    color: white;
+}
+
+h1#title {
+    color: #16f1b0;
+}
+
+A:any-link {
+    color: rgb(0, 162, 255);
+}
