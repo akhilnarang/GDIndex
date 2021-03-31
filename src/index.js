@@ -121,10 +121,11 @@ async function handleRequest(request) {
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://raw.githubusercontent.com/akhilnarang/GDIndex/master/styles.css">
 </head>
-<body style="font-family: 'Open Sans', sans-serif;">
+<body>
 <div class="container">
-<h1 style="color: #009668;">${title}</h1>
+<h1 id="title">${title}</h1>
 ${folderht}
 ${fileht}
 </div>
