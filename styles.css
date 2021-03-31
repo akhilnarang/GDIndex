@@ -8,6 +8,10 @@ table, td, th, tr {
     color: white;
 }
 
+.table td, .table th {
+    border-top-color: rgb(56, 61, 63);
+}
+
 h1#title {
     color: #16f1b0;
 }
