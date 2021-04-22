@@ -6,6 +6,7 @@ html, body {
 
 table, td, th, tr {
     color: white;
+	word-break: break-all;
 }
 
 .table td, .table th {
