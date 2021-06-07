@@ -1,11 +1,20 @@
 // By default assume no SA
-let properties = { use_sa: false, error: false }
+let properties = { use_sa: false, error: false, auth: false }
 
 // Try to detect SA, default to false again
 try {
   properties['use_sa'] = USE_SERVICE_ACCOUNT == 'true'
 } catch (e) {
   console.log('USE_SERVICE_ACCOUNT not defined, assuming false')
+}
+
+// Try to detect if auth is set, default to false
+try {
+  properties['auth'] = USE_AUTH == 'true'
+  properties['auth_username'] = AUTH_USERNAME
+  properties['auth_password'] = AUTH_PASSWORD
+} catch (e) {
+  console.log('USE_AUTH, AUTH_USERNAME, or AUTH_PASSWORD not defined, assuming no auth')
 }
 
 // Set properties to access without SA
@@ -66,6 +75,23 @@ function encodePathComponent(path) {
   return path.split('/').map(encodeURIComponent).join('/');
 }
 
+function parseBasicAuth(auth) {
+  try {
+    return atob(auth.split(' ').pop()).split(':')
+  } catch (e) {
+    return []
+  }
+}
+
+function checkAuth(request) {
+  let auth_string = request.headers.get('Authorization')
+  if (!auth_string || !/^Basic [A-Za-z0-9._~+/-]+=*$/i.test(auth_string)) {
+    return false
+  }
+  const [username, password] = parseBasicAuth(auth_string)
+  return username === properties.auth_username && password == properties.auth_password
+}
+
 async function handleRequest(request) {
   // Only allow GET requests
   if (request.method != 'GET') {
@@ -75,6 +101,14 @@ async function handleRequest(request) {
   // Allow first time startup without properties
   if (properties.error) {
     return new Response("Some properties aren't configured, allowed startup so that wrangler can set them", { status: 200 });
+  }
+
+  // Check auth
+  if (properties.auth && !checkAuth(request)) {
+    return new Response('Unauthorized', {
+      status: 401,
+      headers: { 'WWW-Authenticate': 'Basic realm="GDIndex"' },
+    })
   }
 
   request = Object.assign({}, request, new URL(request.url));
