@@ -2,8 +2,8 @@ import xf from './xfetch'
 import { getTokenFromGCPServiceAccount } from '@sagi.io/workers-jwt'
 
 class GoogleDrive {
-	constructor(auth) {
-		this.auth = auth
+	constructor(properties) {
+		this.auth = properties
 		this.expires = 0
 		this._getIdCache = new Map()
 	}
@@ -11,7 +11,7 @@ class GoogleDrive {
 		// any method that do api call must call this beforehand
 		if (Date.now() < this.expires) return
 		if (
-			USE_SERVICE_ACCOUNT
+			this.auth.use_sa
 		) {
 			const serviceAccountJSON = await sa.get('SERVICE_ACCOUNT_JSON', 'json')
 			const aud = serviceAccountJSON.token_uri

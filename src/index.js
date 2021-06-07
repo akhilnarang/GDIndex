@@ -1,28 +1,41 @@
-if (USE_SERVICE_ACCOUNT) {
-  self.props = {
-    title: TITLE,
-    folder_title: FOLDER_TITLE,
-    default_root_id: DEFAULT_ROOT_ID
-  };
-} else {
-  self.props = {
-    title: TITLE,
-    default_root_id: DEFAULT_ROOT_ID,
-    client_id: CLIENT_ID,
-    client_secret: CLIENT_SECRET,
-    refresh_token: REFRESH_TOKEN,
-    folder_title: FOLDER_TITLE
-  };
+// By default assume no SA
+let properties = { use_sa: false, error: false }
+
+// Try to detect SA, default to false again
+try {
+  properties['use_sa'] = USE_SERVICE_ACCOUNT == 'true'
+} catch (e) {
+  console.log('USE_SERVICE_ACCOUNT not defined, assuming false')
 }
 
+// Set properties to access without SA
+if (!properties['use_sa']) {
+  try {
+    properties['client_id'] = CLIENT_ID
+    properties['client_secret'] = CLIENT_SECRET
+    properties['refresh_token'] = REFRESH_TOKEN
+  } catch (e) {
+    properties['error'] = true
+    console.log("CLIENT_ID, CLIENT_SECRET, or REFRESH_TOKEN not defined. Ignoring for now")
+  }
+}
+// Set default properties
+try {
+  properties['title'] = TITLE
+  properties['folder_title'] = FOLDER_TITLE
+  properties['default_root_id'] = DEFAULT_ROOT_ID
+} catch (err) {
+  properties['error'] = true
+  console.log("TITLE, FOLDER_TITLE, or DEFAULT_ROOT_ID not defined. Ignoring for now")
+}
 import GoogleDrive from './gdrive'
-const gd = new GoogleDrive(self.props);
+const gd = new GoogleDrive(properties);
 
 async function onGet(request) {
   let {
     pathname: path
   } = request;
-  const rootId = request.searchParams.get('rootId') || self.props.default_root_id;
+  const rootId = request.searchParams.get('rootId') || properties.default_root_id;
 
   const result = await gd.getMetaByPath(decodeURIComponent(path), rootId);
 
@@ -54,6 +67,16 @@ function encodePathComponent(path) {
 }
 
 async function handleRequest(request) {
+  // Only allow GET requests
+  if (request.method != 'GET') {
+    return new Response('', { status: 405 });
+  }
+
+  // Allow first time startup without properties
+  if (properties.error) {
+    return new Response("Some properties aren't configured, allowed startup so that wrangler can set them", { status: 200 });
+  }
+
   request = Object.assign({}, request, new URL(request.url));
 
   let path = request.pathname.split('/').map(decodeURIComponent).map(decodeURIComponent).join('/');
@@ -61,7 +84,7 @@ async function handleRequest(request) {
     let parent = encodePathComponent(path.split('/').slice(0, -2).join('/') + '/');
     const {
       files
-    } = await gd.listFolderByPath(path, self.props.default_root_id);
+    } = await gd.listFolderByPath(path, properties.default_root_id);
     let fileht = `<table class="table">
       <tr>
       <th>Sr. No.</th>
@@ -107,12 +130,12 @@ async function handleRequest(request) {
     fileht += `</table>`
     folderht += `</table>`
 
-    let title = self.props.title;
+    let title = properties.title;
     if (filecount == 0) fileht = "";
     if (foldercount == 0) folderht = "";
     if (path != '/') {
       folderht = `← <a href="${parent}">Parent Directory</a><br>` + folderht
-      title = `${self.props.folder_title} ${path}`
+      title = `${properties.folder_title} ${path}`
     }
     const ht = `<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
 <html>
@@ -137,10 +160,6 @@ ${fileht}
         'Content-Type': 'text/html; charset=utf-8'
       }
     });
-  }
-
-  if (request.method != 'GET') {
-    return new Response('', { status: 405 });
   }
 
   let resp = await onGet(request);
