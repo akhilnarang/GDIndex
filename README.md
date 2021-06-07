@@ -29,9 +29,7 @@ If not using a service account, do set USE_SERVICE_ACCOUNT to false
 
 You can set the the above as well as `CF_ACCOUNT_ID`, `CF_API_TOKEN` as secrets in the github repository, for auto deploying on a push to the repo. You will require  `CF_ZONE_ID` (and make [this](https://github.com/AOSiP/aosip-downloads/commit/731be66feb39a4482da32f0b5292d32f13b7f8a9) change to the workflow) as well if you're deploying to your own domain and not a workers.dev domain, which will also require you to set `workers_dev` to `false` in `wrangler.toml`, and set `route` to your domain.
 
+If you wanna use auth, set `AUTH` to true, as well as `AUTH_USERNAME` and `AUTH_PASSWORD` to the values you wish
+Do remember to update the github workflow (env and secrets in the yml file) to ensure those get set in the worker
 
-(Go set the encrypted secrets manually once, since the wrangler action first tries to publish the worker and then set the secrets, and the worker can't be published before the secrets exist)
-
-You can create a random worker and set those names as random values, or you can `echo value | wrangler secret put key` after creating a dummy worker
-
-Create a namespace named `sa` with `wrangler kv:namespace create sa` and update the `wrangler.toml` based on the output it gives you
+Create a namespace named `sa` with `wrangler kv:namespace create sa` and update the `wrangler.toml` based on the output it gives you if you're using a service account
