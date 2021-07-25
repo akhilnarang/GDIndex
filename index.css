@@ -1,7 +1,7 @@
 html, body {
 	color: white;
 	background-color: #242627;
-	font-family: "Open Sans", sans-serif;
+	font-family: "Rubik", sans-serif;
 }
 
 ::-webkit-scrollbar {
@@ -30,6 +30,7 @@ table, td, th, tr {
 
 .table thead th {
 	border-bottom: unset;
+	letter-spacing: 1;
 }
 
 h1#title {

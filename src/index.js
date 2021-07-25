@@ -187,9 +187,9 @@ async function handleRequest(request) {
 			<head>
 				<title>${title}</title>
 				<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-				<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap">
+				<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik&display=swap">
 				<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
-				<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Yash-Garg/GDIndex@master/styles.min.css">
+				<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Yash-Garg/GDIndex@master/index.min.css">
 			</head>
 			<body>
 				<div class="container">
