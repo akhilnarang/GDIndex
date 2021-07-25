@@ -35,6 +35,8 @@ table, td, th, tr {
 h1#title {
 	color: #16f1b0;
 	word-break: break-all;
+	font-size: 1.5rem;
+	margin-top: 8px;
 }
 
 A:any-link {
