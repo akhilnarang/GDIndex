@@ -1,32 +1,36 @@
 html, body {
-    color: white;
-    background-color: #242627;
-    font-family: "Open Sans", sans-serif;
+	color: white;
+	background-color: #242627;
+	font-family: "Open Sans", sans-serif;
 }
 
 table, td, th, tr {
-    color: white;
-    word-break: break-all;
-    min-width: 5rem;
+	color: white;
+	word-break: break-all;
+	min-width: 5rem;
 }
 
 .table td, .table th {
-    border-top-color: rgb(56, 61, 63);
+	border-top-color: rgb(56, 61, 63);
+}
+
+.table thead th {
+	border-bottom: unset;
 }
 
 h1#title {
-    color: #16f1b0;
-    word-break: break-all;
+	color: #16f1b0;
+	word-break: break-all;
 }
 
 A:any-link {
-    color: rgb(0, 162, 255);
+	color: rgb(0, 162, 255);
 }
 
 @media (max-width: 767px) {
-    h1#title {
-        font-size: x-large;
-        padding-top: 20px;
-        padding-bottom: 10px;
-    }
+	h1#title {
+		font-size: x-large;
+		padding-top: 20px;
+		padding-bottom: 10px;
+	}
 }

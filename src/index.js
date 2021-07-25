@@ -140,12 +140,14 @@ async function handleRequest(request) {
 			path,
 			properties.default_root_id
 		);
-		let fileht = `<table class="table">
-		<tr>
-		<th>Sr. No.</th>
-		<th>Name</th>
-		<th>Size</th>
-		</tr>
+		let fileht = `<table class="table table-hover">
+		<thead>
+			<tr>
+			<th>Sr. No.</th>
+			<th>Name</th>
+			<th>Size</th>
+			</tr>
+		</thead>
       	`;
 
 		let filecount = 0;
@@ -184,7 +186,7 @@ async function handleRequest(request) {
 <head>
 <title>${title}</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-<link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap">
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/akhilnarang/GDIndex@master/styles.css">
 </head>
