@@ -51,3 +51,7 @@ A:any-link {
 		padding-bottom: 10px;
 	}
 }
+
+.container-fluid {
+	max-width: 90%;
+}
