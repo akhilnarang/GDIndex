@@ -32,6 +32,7 @@ if (!properties["use_sa"]) {
 		);
 	}
 }
+
 // Set default properties
 try {
 	properties["title"] = TITLE;
@@ -182,21 +183,21 @@ async function handleRequest(request) {
 			title = `${properties.folder_title} ${path}`;
 		}
 		const ht = `<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<html>
-<head>
-<title>${title}</title>
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap">
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/akhilnarang/GDIndex@master/styles.css">
-</head>
-<body>
-<div class="container">
-<h1 id="title">${title}</h1>
-${fileht}
-</div>
-</body>
-</html>`;
+		<html>
+			<head>
+				<title>${title}</title>
+				<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+				<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap">
+				<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+				<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Yash-Garg/GDIndex@master/styles.css">
+			</head>
+			<body>
+				<div class="container">
+					<h1 id="title">${title}</h1>
+					${fileht}
+				</div>
+			</body>
+		</html>`;
 		return new Response(ht, {
 			status: 200,
 			headers: {

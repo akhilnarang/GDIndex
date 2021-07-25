@@ -4,6 +4,20 @@ html, body {
 	font-family: "Open Sans", sans-serif;
 }
 
+::-webkit-scrollbar {
+	width: 8px;
+	height: 8px;
+}
+
+::-webkit-scrollbar-track {
+	background-color: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+	border-radius: 20px;
+	background-color: rgb(146 146 146);
+}
+
 table, td, th, tr {
 	color: white;
 	word-break: break-all;
