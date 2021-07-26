@@ -49,6 +49,7 @@ A:any-link {
 		font-size: x-large;
 		padding-top: 20px;
 		padding-bottom: 10px;
+		margin-top: unset;
 	}
 }
 
