@@ -20,12 +20,12 @@ html, body {
 
 table, td, th, tr {
 	color: white;
-	word-break: break-all;
 	min-width: 5rem;
 }
 
 .table td, .table th {
 	border-top-color: rgb(56, 61, 63);
+	word-break: break-word;
 }
 
 .table thead th {
