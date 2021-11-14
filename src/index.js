@@ -141,15 +141,16 @@ async function handleRequest(request) {
 			path,
 			properties.default_root_id
 		);
-		let fileht = `<table class="table table-hover">
-		<thead>
-			<tr>
-			<th>Sr. No.</th>
-			<th>Name</th>
-			<th>Size</th>
-			</tr>
-		</thead>
-      	`;
+		let fileht = `
+			<table class="table table-hover">
+				<thead>
+					<tr>
+					<th>Sr. No.</th>
+					<th>Name</th>
+					<th>Size</th>
+					</tr>
+				</thead>
+				<tbody>`;
 
 		let filecount = 0;
 
@@ -170,11 +171,16 @@ async function handleRequest(request) {
 			} else {
 				s = `-`;
 			}
-			fileht += `<tr><td>${filecount}</td><td><a href="${
-				p + (isf ? "/" : "")
-			}">${f.name}</a></td><td>${s}</td></tr>`;
+			fileht += `
+					<tr>
+						<td>${filecount}</td>
+						<td><a href="${p + (isf ? "/" : "")}">${f.name}</a></td>
+						<td>${s}</td>
+					</tr>`;
 		}
-		fileht += `</table>`;
+		fileht += `
+				</tbody>
+			</table>`;
 
 		let title = properties.title;
 		if (filecount == 0) fileht = "";
@@ -183,21 +189,21 @@ async function handleRequest(request) {
 			title = `${properties.folder_title} ${path}`;
 		}
 		const ht = `<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-		<html>
-			<head>
-				<title>${title}</title>
-				<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-				<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik&display=swap">
-				<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
-				<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/akhilnarang/GDIndex@master/index.min.css">
-			</head>
-			<body>
-				<div class="container-fluid">
-					<h1 id="title">${title}</h1>
-					${fileht}
-				</div>
-			</body>
-		</html>`;
+<html>
+	<head>
+		<title>${title}</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik&display=swap">
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/akhilnarang/GDIndex@master/index.min.css">
+	</head>
+	<body>
+		<div class="container-fluid">
+			<h1 id="title">${title}</h1>
+			${fileht}
+		</div>
+	</body>
+</html>`;
 		return new Response(ht, {
 			status: 200,
 			headers: {
